@@ -1,4 +1,12 @@
-# GrepoSentry
+<p align="center">
+  <img src="assets/logo.png" alt="GrepoSentry Logo" width="140">
+</p>
+
+<h1 align="center">GrepoSentry</h1>
+
+<p align="center">
+  Advanced command filter userscript for Grepolis.
+</p>
 
 **GrepoSentry** is a Grepolis userscript focused on command overview readability, faster coordination, and cleaner filtering for daily alliance play.
 
