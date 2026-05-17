@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         GrepoSentry - Command Filter 1.0.6
+// @name         GrepoSentry - Command Filter
 // @namespace    https://grepolis.latavernadeglisbronzi.net/
-// @version      1.0.6
+// @version      1.0.7
 // @description  Filtro ordini avanzato per Grepolis. Filtra attacchi, supporti, rientri, rivolte e conquiste nella panoramica comandi e nel dropdown citta. Creato da Gufettino | SilthersGaming.net
 // @author       Gufettino (SilthersGaming.net)
 // @include      http://*.grepolis.com/game/*
@@ -22,7 +22,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '1.0.6';
+  var VERSION = '1.0.7';
   var AUTHOR = 'Gufettino';
   var SITE = 'SilthersGaming.net';
   var SITE_URL = 'https://silthersgaming.net';
@@ -511,7 +511,7 @@
     '.indicatorAankomst{color:rgb(0 0 0)!important;font-size:14px!important;position:relative!important;display:flex!important;line-height:0px!important;align-items:flex-start!important}' +
     '.sandy-box .item.command:hover,.sandy-box .item.recruit:hover,.sandy-box .item.trade:hover,.sandy-box .item.unit_movements:hover{background-position:0 0!important;padding-bottom:15px!important;background-color:white!important}' +
     '.sandy-box .item.command,.sandy-box .item.command.conqueror_units{height:54px!important;padding-bottom:15px!important;background-color:white!important}' +
-    '.alliance_link,a{outline-style:none!important;font-weight:700!important;text-decoration:none!important;color:#804000!important;cursor:pointer!important;font-size:13px!important}'
+    '.alliance_link,a{outline-style:none!important;font-weight:700!important;text-decoration:none!important;cursor:pointer!important;font-size:13px!important}'
   );
 
   function buildPanel() {
