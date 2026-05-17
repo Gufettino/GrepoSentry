@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GrepoSentry - Command Filter
 // @namespace    https://grepolis.latavernadeglisbronzi.net/
-// @version      1.0.4
+// @version      1.0.6
 // @description  Filtro ordini avanzato per Grepolis. Filtra attacchi, supporti, rientri, rivolte e conquiste nella panoramica comandi e nel dropdown citta. Creato da Gufettino | SilthersGaming.net
 // @author       Gufettino (SilthersGaming.net)
 // @include      http://*.grepolis.com/game/*
@@ -22,7 +22,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '1.0.4';
+  var VERSION = '1.0.6';
   var AUTHOR = 'Gufettino';
   var SITE = 'SilthersGaming.net';
   var SITE_URL = 'https://silthersgaming.net';
@@ -506,7 +506,12 @@
     '#gs_settings .gs-icon-field{display:flex;align-items:center;gap:6px;margin:4px 0}' +
     '#gs_settings .gs-icon-field input[type="text"]{flex:1;padding:3px 6px;border:1px solid #d0be97;border-radius:3px;font-size:11px;background:#fff;max-width:300px}' +
     '#gs_settings .gs-icon-field .gs-iprev{width:24px;height:24px;text-align:center;line-height:24px;font-size:16px;flex-shrink:0}' +
-    '#gs_settings .gs-about-center{text-align:center;padding:30px 10px}'
+    '#gs_settings .gs-about-center{text-align:center;padding:30px 10px}' +
+    '.dropdown-list .content,.dropdown-list .content.js-dropdown-item-list,div.content.js-dropdown-item-list{max-height:300px!important;overflow:auto!important}' +
+    '.indicatorAankomst{color:rgb(0 0 0)!important;font-size:14px!important;position:relative!important;display:flex!important;line-height:0px!important;align-items:flex-start!important}' +
+    '.sandy-box .item.command:hover,.sandy-box .item.recruit:hover,.sandy-box .item.trade:hover,.sandy-box .item.unit_movements:hover{background-position:0 0!important;padding-bottom:15px!important;background-color:white!important}' +
+    '.sandy-box .item.command,.sandy-box .item.command.conqueror_units{height:54px!important;padding-bottom:15px!important;background-color:white!important}' +
+    '.alliance_link,a{outline-style:none!important;font-weight:700!important;text-decoration:none!important;color:#804000!important;cursor:pointer!important;font-size:13px!important}'
   );
 
   function buildPanel() {
@@ -688,7 +693,16 @@
   }
 
   function fCity() {
-    document.querySelectorAll('.js-dropdown-item-list > div[data-commandtype],.js-dropdown-item-list > div[data-command_type],.toolbar_activities_body [data-commandtype],.toolbar_activities_body [data-command_type]').forEach(function (el) {
+    var selector = [
+      '.js-dropdown-item-list > div[data-commandtype]',
+      '.js-dropdown-item-list > div[data-command_type]',
+      '.toolbar_activities_body [data-commandtype]',
+      '.toolbar_activities_body [data-command_type]',
+      '.dropdown-list .content.js-dropdown-item-list > div[data-commandtype]',
+      '.dropdown-list .content.js-dropdown-item-list > div[data-command_type]'
+    ].join(',');
+
+    document.querySelectorAll(selector).forEach(function (el) {
       var tp = classify(el);
       var hide = tp && !state[tp];
       var isH = el.classList.contains('gs-hidden');
@@ -699,13 +713,19 @@
   }
 
   var fT = null;
+  var cmdObs = null;
+  var cityObs = null;
 
-  function scheduleFilter() {
+  function scheduleFilter(delay) {
     if (fT) clearTimeout(fT);
-    fT = setTimeout(applyFilters, 300);
+    fT = setTimeout(applyFilters, typeof delay === 'number' ? delay : 300);
   }
 
-  var cmdObs = null;
+  function softBurstFilter() {
+    scheduleFilter(100);
+    setTimeout(applyFilters, 500);
+    setTimeout(applyFilters, 1200);
+  }
 
   function watch() {
     injectToggle();
@@ -716,12 +736,22 @@
       c.dataset.gsW = '1';
       if (cmdObs) cmdObs.disconnect();
       cmdObs = new MutationObserver(function () {
-        scheduleFilter();
+        softBurstFilter();
       });
-      cmdObs.observe(c, { childList: true, subtree: false });
+      cmdObs.observe(c, { childList: true, subtree: true });
     }
 
-    scheduleFilter();
+    var cityRoot = document.querySelector('.toolbar_activities_body, .dropdown-list .content.js-dropdown-item-list, .js-dropdown-item-list');
+    if (cityRoot && !cityRoot.dataset.gsW) {
+      cityRoot.dataset.gsW = '1';
+      if (cityObs) cityObs.disconnect();
+      cityObs = new MutationObserver(function () {
+        softBurstFilter();
+      });
+      cityObs.observe(cityRoot, { childList: true, subtree: true });
+    }
+
+    softBurstFilter();
   }
 
   var bObs = new MutationObserver(function (m) {
