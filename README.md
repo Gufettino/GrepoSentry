@@ -12,6 +12,39 @@
 
 This repository is the **official public review, versioning, and release repository** for the project.
 
+## Installation & Support
+
+### Official website
+
+You can find the official GrepoSentry page here:
+
+- https://grepolis.latavernadeglisbronzi.net/
+
+### Install GrepoSentry
+
+To install the latest public version, open the official website and download the userscript from the public download section.
+
+Direct repository path:
+
+- `downloads/GrepoSentry-Command-Filter.user.js`
+
+GrepoSentry is designed to work with Tampermonkey on Grepolis game pages.
+
+### Automatic updates
+
+The script includes:
+
+- `@updateURL`
+- `@downloadURL`
+
+This allows Tampermonkey to check for new published versions automatically when updates are released.
+
+### Support, reports and feedback
+
+For support, bug reports, compatibility issues, or feature requests, use the official Discord server:
+
+- https://discord.gg/aCrkaWFx5y
+
 ## Project scope
 
 GrepoSentry is designed as a **UI enhancement and command filtering tool** for Grepolis.
@@ -45,20 +78,6 @@ This repository exists to provide:
 - public documentation
 - changelog history
 - staff review support
-
-## Installation
-
-### Tampermonkey
-Install the latest public script from:
-
-- `downloads/GrepoSentry-Command-Filter.user.js`
-
-### Update channel
-The script uses:
-- `@updateURL`
-- `@downloadURL`
-
-so clients can receive newer releases when a new version is published.
 
 ## Repository structure
 
