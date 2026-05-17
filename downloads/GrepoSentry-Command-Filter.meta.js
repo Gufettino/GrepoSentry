@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GrepoSentry - Command Filter
 // @namespace    https://greasyfork.org/
-// @version      1.0.4
+// @version      1.0.6
 // @description  Advanced command filter for Grepolis - Created by Gufettino | SilthersGaming.net
 // @author       Gufettino (SilthersGaming.net)
 // @include      http://*.grepolis.com/game/*
