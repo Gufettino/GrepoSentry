@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         GrepoSentry - Command Filter
+// @name         GrepoSentry - Command Filter 1.0.6
 // @namespace    https://grepolis.latavernadeglisbronzi.net/
 // @version      1.0.6
 // @description  Filtro ordini avanzato per Grepolis. Filtra attacchi, supporti, rientri, rivolte e conquiste nella panoramica comandi e nel dropdown citta. Creato da Gufettino | SilthersGaming.net
