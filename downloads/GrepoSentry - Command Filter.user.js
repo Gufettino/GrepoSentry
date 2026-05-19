@@ -1,13 +1,12 @@
 // ==UserScript==
 // @name         GrepoSentry - Command Filter
 // @namespace    https://grepolis.latavernadeglisbronzi.net/
-// @version      1.0.8
+// @version      1.0.9
 // @description  Filtro ordini avanzato per Grepolis. Filtra attacchi, supporti, rientri, rivolte e conquiste nella panoramica comandi e nel dropdown citta. Creato da Gufettino | SilthersGaming.net
 // @author       Gufettino (SilthersGaming.net)
-// @include      http://*.grepolis.com/game/*
-// @include      https://*.grepolis.com/game/*
-// @exclude      view-source://*
+// @match        http://*.grepolis.com/game/*
 // @match        https://*.grepolis.com/game/*
+// @exclude      view-source://*
 // @updateURL    https://grepolis.latavernadeglisbronzi.net/downloads/GrepoSentry-Command-Filter.meta.js
 // @downloadURL  https://grepolis.latavernadeglisbronzi.net/downloads/GrepoSentry-Command-Filter.user.js
 // @homepageURL  https://grepolis.latavernadeglisbronzi.net/
@@ -15,6 +14,9 @@
 // @icon         https://grepolis.latavernadeglisbronzi.net/logo.png
 // @icon64       https://grepolis.latavernadeglisbronzi.net/logo.png
 // @grant        GM_addStyle
+// @grant        GM_xmlhttpRequest
+// @grant        GM_info
+// @connect      grepolis.latavernadeglisbronzi.net
 // @run-at       document-idle
 // @copyright    2026+, grepolis.latavernadeglisbronzi.net | latavernadeglisbronzi.net | silthersgaming.net
 // ==/UserScript==
@@ -22,7 +24,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '1.0.8';
+  var VERSION = (typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) ? GM_info.script.version : '1.0.9';
   var AUTHOR = 'Gufettino';
   var SITE = 'SilthersGaming.net';
   var SITE_URL = 'https://silthersgaming.net';
@@ -32,6 +34,14 @@
   var OFFICIAL_LOGO_URL = 'https://grepolis.latavernadeglisbronzi.net/logo.png';
   var KOFI_URL = 'https://ko-fi.com/C0C5BUSID';
   var KOFI_IMAGE_URL = 'https://grepolis.latavernadeglisbronzi.net/logokofi.png';
+  var UPDATE_META_URL = 'https://grepolis.latavernadeglisbronzi.net/downloads/GrepoSentry-Command-Filter.meta.js';
+  var UPDATE_INSTALL_URL = 'https://grepolis.latavernadeglisbronzi.net/downloads/GrepoSentry-Command-Filter.user.js';
+
+  var updateStatus = {
+    state: 'checking',
+    latest: '',
+    checkedAt: 0
+  };
 
   var SERVER_ID = (function () {
     var m = window.location.hostname.match(/^([a-z]{2}\d+)\./);
@@ -46,6 +56,13 @@
       subtitle: 'Command Filter',
       settings_title: 'GrepoSentry',
       settings_ver: 'Version is up to date',
+      update_checking: 'Checking updates...',
+      update_ok: 'Version is up to date',
+      update_available: 'Update available',
+      update_error: 'Unable to check updates',
+      update_installed: 'installed',
+      update_latest: 'latest',
+      update_open: 'Install update',
       tab_filters: 'Filters',
       tab_display: 'Display',
       tab_icons: 'Icons',
@@ -106,7 +123,14 @@
       title: 'GrepoSentry',
       subtitle: 'Filtro Ordini',
       settings_title: 'GrepoSentry',
-      settings_ver: 'La versione e aggiornata',
+      settings_ver: 'La versione è aggiornata',
+      update_checking: 'Controllo aggiornamenti...',
+      update_ok: 'Versione aggiornata',
+      update_available: 'Aggiornamento disponibile',
+      update_error: 'Impossibile controllare aggiornamenti',
+      update_installed: 'installata',
+      update_latest: 'ultima',
+      update_open: 'Installa aggiornamento',
       tab_filters: 'Filtri',
       tab_display: 'Visualizzazione',
       tab_icons: 'Icone',
@@ -209,8 +233,11 @@
       });
 
       if (raw.icons) {
-        s.icons = raw.icons;
-        delete s.icons.ext;
+        s.icons = {};
+        Object.keys(raw.icons).forEach(function (id) {
+          var cleaned = normalizeIconUrl(raw.icons[id]);
+          if (cleaned && id !== 'ext') s.icons[id] = cleaned;
+        });
       }
 
       if (raw.groups) {
@@ -227,7 +254,14 @@
   }
 
   function saveState(s) {
-    if (s && s.icons) delete s.icons.ext;
+    if (s && s.icons) {
+      delete s.icons.ext;
+      Object.keys(s.icons).forEach(function (id) {
+        var cleaned = normalizeIconUrl(s.icons[id]);
+        if (cleaned && id !== 'ext') s.icons[id] = cleaned;
+        else delete s.icons[id];
+      });
+    }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
   }
 
@@ -239,34 +273,167 @@
     return l[key] || LANG.en[key] || key;
   }
 
+  function escHtml(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function escAttr(v) {
+    return escHtml(v).replace(/`/g, '&#96;');
+  }
+
+  function normalizeIconUrl(v) {
+    var raw = String(v || '').trim();
+    if (!raw) return '';
+
+    try {
+      var u = new URL(raw, window.location.href);
+      if (u.protocol !== 'https:' && u.protocol !== 'http:') return '';
+      return u.href;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function parseVersionFromMeta(metaText) {
+    var m = String(metaText || '').match(/^\s*\/\/\s*@version\s+([^\s]+)/mi);
+    return m ? m[1].trim() : '';
+  }
+
+  function compareVersions(a, b) {
+    var pa = String(a || '0').split(/[.-]/).map(function (x) {
+      var n = parseInt(x, 10);
+      return isNaN(n) ? 0 : n;
+    });
+
+    var pb = String(b || '0').split(/[.-]/).map(function (x) {
+      var n = parseInt(x, 10);
+      return isNaN(n) ? 0 : n;
+    });
+
+    var len = Math.max(pa.length, pb.length);
+    for (var i = 0; i < len; i++) {
+      var na = pa[i] || 0;
+      var nb = pb[i] || 0;
+      if (na > nb) return 1;
+      if (na < nb) return -1;
+    }
+    return 0;
+  }
+
+  function getUpdateStatusText() {
+    if (updateStatus.state === 'available') {
+      return '⚠️ ' + tt('update_available') + ': v' + updateStatus.latest + ' — ' + tt('update_installed') + ': v' + VERSION;
+    }
+
+    if (updateStatus.state === 'ok') {
+      return '✅ ' + tt('update_ok') + ': v' + VERSION;
+    }
+
+    if (updateStatus.state === 'error') {
+      return '❌ ' + tt('update_error');
+    }
+
+    return '🔎 ' + tt('update_checking');
+  }
+
+  function refreshUpdateStatusUI() {
+    var el = document.getElementById('gs-update-status');
+    if (!el) return;
+
+    el.textContent = getUpdateStatusText();
+
+    if (updateStatus.state === 'available') {
+      el.style.color = '#c0392b';
+    } else if (updateStatus.state === 'ok') {
+      el.style.color = '#090';
+    } else if (updateStatus.state === 'error') {
+      el.style.color = '#a65f00';
+    } else {
+      el.style.color = '#8b6914';
+    }
+
+    var link = document.getElementById('gs-update-link');
+    if (link) link.style.display = updateStatus.state === 'available' ? 'inline-block' : 'none';
+  }
+
+  function checkForGrepoSentryUpdate() {
+    updateStatus.state = 'checking';
+    refreshUpdateStatusUI();
+
+    if (typeof GM_xmlhttpRequest !== 'function') {
+      updateStatus.state = 'error';
+      refreshUpdateStatusUI();
+      return;
+    }
+
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: UPDATE_META_URL + '?_=' + Date.now(),
+      timeout: 8000,
+      onload: function (res) {
+        if (!res || res.status < 200 || res.status >= 300) {
+          updateStatus.state = 'error';
+          refreshUpdateStatusUI();
+          return;
+        }
+
+        var remoteVersion = parseVersionFromMeta(res.responseText);
+        if (!remoteVersion) {
+          updateStatus.state = 'error';
+          refreshUpdateStatusUI();
+          return;
+        }
+
+        updateStatus.latest = remoteVersion;
+        updateStatus.checkedAt = Date.now();
+        updateStatus.state = compareVersions(remoteVersion, VERSION) > 0 ? 'available' : 'ok';
+        refreshUpdateStatusUI();
+      },
+      onerror: function () {
+        updateStatus.state = 'error';
+        refreshUpdateStatusUI();
+      },
+      ontimeout: function () {
+        updateStatus.state = 'error';
+        refreshUpdateStatusUI();
+      }
+    });
+  }
+
   function getIconUrl(id) {
     if (id === 'ext') return OFFICIAL_LOGO_URL;
-    if (state.icons[id]) return state.icons[id];
-    return '';
+    return normalizeIconUrl(state.icons[id]);
+  }
+
+  function iconImgHtml(id, size, extraStyle) {
+    var url = getIconUrl(id);
+    var fallback = escHtml(DEFAULT_ICONS[id] || '');
+    if (url) {
+      return '<img src="' + escAttr(url) + '" style="width:' + size + 'px;height:' + size + 'px;vertical-align:middle;object-fit:contain;' + (extraStyle || '') + '" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'inline\'"><span style="display:none">' + fallback + '</span>';
+    }
+    return fallback;
   }
 
   function icon(id) {
-    var url = getIconUrl(id);
-    if (url) {
-      return '<img src="' + url + '" style="width:190px;height:190px;vertical-align:middle;object-fit:contain;" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'inline\'"><span style="display:none">' + (DEFAULT_ICONS[id] || '') + '</span>';
-    }
-    return DEFAULT_ICONS[id] || '';
+    return iconImgHtml(id, 18, '');
   }
 
   function iconText(id) {
-    var url = getIconUrl(id);
-    if (url) {
-      return '<img src="' + url + '" style="width:16px;height:16px;vertical-align:middle;object-fit:contain;" onerror="this.outerHTML=\'' + (DEFAULT_ICONS[id] || '') + '\'">';
-    }
-    return DEFAULT_ICONS[id] || '';
+    return iconImgHtml(id, 16, '');
   }
 
   function iconBig(id) {
     var url = getIconUrl(id);
+    var fallback = escHtml(DEFAULT_ICONS[id] || '');
     if (url) {
-      return '<img src="' + url + '" style="width:48px;height:48px;object-fit:contain;" onerror="this.outerHTML=\'<span style=font-size:36px>' + (DEFAULT_ICONS[id] || '') + '</span>\'">';
+      return '<img src="' + escAttr(url) + '" style="width:48px;height:48px;object-fit:contain;" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'inline-block\'"><span style="display:none;font-size:36px">' + fallback + '</span>';
     }
-    return '<span style="font-size:36px">' + (DEFAULT_ICONS[id] || '') + '</span>';
+    return '<span style="font-size:36px">' + fallback + '</span>';
   }
 
   function getCmdType(el) {
@@ -826,7 +993,7 @@
     var iconRows = '';
     FILTERS.forEach(function (f) {
       iconRows += '<tr><td>' + iconBig(f.id) + '</td><td><div style="font-weight:bold;margin-bottom:4px">' + tt(f.id) + '</div>' +
-        '<div class="gs-icon-field"><div class="gs-iprev">' + icon(f.id) + '</div><input type="text" class="gs-s-icon" data-icon-id="' + f.id + '" value="' + (state.icons[f.id] || '') + '" placeholder="' + tt('icon_placeholder') + '"></div></td></tr>';
+        '<div class="gs-icon-field"><div class="gs-iprev">' + icon(f.id) + '</div><input type="text" class="gs-s-icon" data-icon-id="' + f.id + '" value="' + escAttr(state.icons[f.id] || '') + '" placeholder="' + tt('icon_placeholder') + '"></div></td></tr>';
     });
 
     iconRows += '<tr><td></td><td><a href="#" id="gs-reset-icons" style="color:#c0392b;font-size:11px">' + tt('reset_icons') + '</a></td></tr>';
@@ -836,7 +1003,8 @@
       '<div style="float:right;margin-top:-2px;margin-right:-5px"><span class="grepo_input"><span class="left"><span class="right">' +
       '<select id="gs-s-lang-quick" style="font-size:11px"><option value="en"' + (state.lang === 'en' ? ' selected' : '') + '>EN</option><option value="it"' + (state.lang === 'it' ? ' selected' : '') + '>IT</option></select>' +
       '</span></span></span></div></div>' +
-      '<div style="color:#090;margin:4px 0 8px"><span style="font-size:11px">✅ ' + tt('settings_ver') + '</span></div>' +
+      '<div style="margin:4px 0 8px"><span id="gs-update-status" style="font-size:11px;color:#8b6914">' + escHtml(getUpdateStatusText()) + '</span> ' +
+      '<a id="gs-update-link" href="' + escAttr(UPDATE_INSTALL_URL) + '" target="_blank" rel="noopener noreferrer" style="display:none;font-size:11px;color:#c0392b;margin-left:8px">' + escHtml(tt('update_open')) + ' →</a></div>' +
       '<ul class="menu_inner gs-stab-nav">' +
       '<li><a class="submenu_link active" data-gs-tab="filters"><span class="left"><span class="right"><span class="middle">' + tt('tab_filters') + '</span></span></span></a></li>' +
       '<li><a class="submenu_link" data-gs-tab="display"><span class="left"><span class="right"><span class="middle">' + tt('tab_display') + '</span></span></span></a></li>' +
@@ -847,7 +1015,7 @@
       '<table class="content_category gs-stab-panel" data-gs-tab="display"><tbody>' + displayRows + '</tbody></table>' +
       '<table class="content_category gs-stab-panel" data-gs-tab="icons"><tbody>' + iconRows + '</tbody></table>' +
       '<div class="gs-stab-panel gs-about-center" data-gs-tab="about">' +
-      '<div style="font-size:60px;margin-bottom:10px">' + icon('ext') + '</div>' +
+      '<div style="font-size:60px;margin-bottom:10px">' + iconBig('ext') + '</div>' +
       '<h2 style="color:#8b6914;margin:0 0 4px">GrepoSentry</h2>' +
       '<p style="font-size:11px;color:#888;margin:0 0 6px">v' + VERSION + '</p>' +
       '<p style="font-size:13px;margin-bottom:4px">' + tt('created_by') + ' <strong>' + AUTHOR + '</strong></p>' +
@@ -970,13 +1138,23 @@
       inp.addEventListener('change', function () {
         var id = this.dataset.iconId;
         if (!id || id === 'ext') return;
-        if (this.value.trim()) state.icons[id] = this.value.trim();
-        else delete state.icons[id];
+
+        var cleaned = normalizeIconUrl(this.value);
+        if (cleaned) {
+          state.icons[id] = cleaned;
+          this.value = cleaned;
+        } else {
+          delete state.icons[id];
+          this.value = '';
+        }
+
         saveState(state);
         rebuildPanel();
         refreshToggle();
       });
     });
+
+    refreshUpdateStatusUI();
   }
 
   function refreshToggle() {
@@ -1001,6 +1179,8 @@
       else cbx.classList.remove('checked', 'green');
     });
   }
+
+  checkForGrepoSentryUpdate();
 
   console.log('%c[GrepoSentry v' + VERSION + '] Loaded - Server: ' + SERVER_ID + ' | ' + AUTHOR + ' @ ' + SITE + ' | ' + PLUGIN_URL, 'color:#ffd780;font-weight:bold;');
 })();
