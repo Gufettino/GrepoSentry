@@ -41,7 +41,7 @@ This allows Tampermonkey to check for new published versions automatically when 
 
 ### Support, reports and feedback
 
-For support, bug reports, compatibility issues, or feature requests, use the official Discord server:
+For support, bug reports, compatibility issues, or feature requests, use the official Discord server below:
 
 - https://discord.gg/aCrkaWFx5y
 
