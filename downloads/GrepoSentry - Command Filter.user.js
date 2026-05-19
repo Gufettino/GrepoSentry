@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GrepoSentry - Command Filter
 // @namespace    https://grepolis.latavernadeglisbronzi.net/
-// @version      1.0.9
+// @version      1.0.10
 // @description  Filtro ordini avanzato per Grepolis. Filtra attacchi, supporti, rientri, rivolte e conquiste nella panoramica comandi e nel dropdown citta. Creato da Gufettino | SilthersGaming.net
 // @author       Gufettino (SilthersGaming.net)
 // @match        http://*.grepolis.com/game/*
@@ -24,7 +24,7 @@
 (function () {
   'use strict';
 
-  var VERSION = (typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) ? GM_info.script.version : '1.0.9';
+  var VERSION = (typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) ? GM_info.script.version : '1.0.10';
   var AUTHOR = 'Gufettino';
   var SITE = 'SilthersGaming.net';
   var SITE_URL = 'https://silthersgaming.net';
