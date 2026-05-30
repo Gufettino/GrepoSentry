@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         GrepoSentry - Command Filter
 // @namespace    https://grepolis.latavernadeglisbronzi.net/
-// @version      1.0.13
-// @description  Filtro ordini avanzato per Grepolis. Separa rivolte blu/rosse dagli attacchi in modalità rivolta e corregge supporti outgoing.
+// @version      1.0.14
+// @description  Filtro ordini avanzato per Grepolis. Separa rivolte blu/rosse dagli attacchi in modalità rivolta, corregge supporti outgoing e pulisce i tag nel dropdown.
 // @author       Gufettino (SilthersGaming.net)
 // @match        http://*.grepolis.com/game/*
 // @match        https://*.grepolis.com/game/*
@@ -24,7 +24,7 @@
 (function () {
   'use strict';
 
-  var VERSION = (typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) ? GM_info.script.version : '1.0.13';
+  var VERSION = (typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) ? GM_info.script.version : '1.0.14';
   var AUTHOR = 'Gufettino';
   var SITE_URL = 'https://silthersgaming.net';
   var PLUGIN_URL = 'https://grepolis.latavernadeglisbronzi.net';
@@ -417,6 +417,16 @@
     '.dropdown-list .content.js-dropdown-item-list,div.content.js-dropdown-item-list{overflow:auto!important}' +
     '#context_menu,#context_menu *{pointer-events:auto!important}' +
     '#gs_settings .alliance_link,#gs_settings a{outline-style:none!important;font-weight:700!important;text-decoration:none!important;cursor:pointer!important}'
+  );
+
+  // Nasconde i tag personalizzati delle polis solo nei dropdown comandi/movimenti.
+  // Evita che elementi tipo <span class="customTag">TESTING</span> rovinino la lista attacchi/supporti.
+  addStyle(
+    '.js-dropdown-item-list .town_link .customTag,' +
+    '.toolbar_activities_body .town_link .customTag,' +
+    '.dropdown-list .content.js-dropdown-item-list .town_link .customTag{' +
+      'display:none!important;' +
+    '}'
   );
 
   function getCmdType(el) {
@@ -1124,7 +1134,7 @@
     about += '<p style="font-size:12px;color:#888;margin-bottom:12px"><a href="' + escAttr(SITE_URL) + '" target="_blank" style="color:#8b6914">silthersgaming.net</a> | <a href="' + escAttr(PLUGIN_URL) + '" target="_blank" style="color:#8b6914">grepolis.latavernadeglisbronzi.net</a></p>';
     about += '<table style="width:100%;border-collapse:collapse;text-align:left;font-size:12px">';
     about += '<tr><td style="padding:6px 10px;color:#888;width:130px">' + escHtml(tt('server')) + '</td><td style="padding:6px 10px"><strong>' + escHtml(SERVER_ID) + '</strong></td></tr>';
-    about += '<tr><td style="padding:6px 10px;color:#888">Fix 1.0.13</td><td style="padding:6px 10px">Rivolta Blu separata da Attacco Rivolta; support outgoing corretto; menu polis meno disturbato.</td></tr>';
+    about += '<tr><td style="padding:6px 10px;color:#888">Fix 1.0.13</td><td style="padding:6px 10px">Rivolta Blu separata da Attacco Rivolta; support outgoing corretto; menu polis meno disturbato; tag personalizzati nascosti nel dropdown.</td></tr>';
     about += '</table>';
     about += '<p style="font-size:10px;color:#aaa;margin-top:12px">' + escHtml(tt('server_note')) + '</p>';
     about += '</div>';
