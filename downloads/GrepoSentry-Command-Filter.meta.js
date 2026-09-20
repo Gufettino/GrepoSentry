@@ -16,6 +16,6 @@
 // @supportURL   https://discord.gg/4TA7F8SYJj
 // @downloadURL  https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/downloads/GrepoSentry%20-%20Command%20Filter.user.js
 // @updateURL    https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/downloads/GrepoSentry-Command-Filter.meta.js
-// @icon         https://grepolis.latavernadeglisbronzi.net/logo.png
-// @icon64       https://grepolis.latavernadeglisbronzi.net/logo.png
+// @icon         https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/assets/logo.png
+// @icon64       https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/assets/logo.png
 // ==/UserScript==
