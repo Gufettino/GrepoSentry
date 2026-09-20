@@ -14,15 +14,12 @@ This repository is the **official public review, versioning, and release reposit
 
 ## Installation & Support
 
-### Official website
-
-You can find the official GrepoSentry page here:
-
-- https://grepolis.latavernadeglisbronzi.net/
-
 ### Install GrepoSentry
 
-To install the latest public version, open the official website and download the userscript from the public download section.
+Download the latest public release:
+
+Direct repository path:
+- https://github.com/Gufettino/GrepoSentry/releases/tag/Update
 
 Direct repository path:
 
@@ -43,7 +40,7 @@ This allows Tampermonkey to check for new published versions automatically when 
 
 For support, bug reports, compatibility issues, or feature requests, use the official Discord server below:
 
-- https://discord.gg/aCrkaWFx5y
+- [https://discord.gg/aCrkaWFx5y](https://discord.gg/4TA7F8SYJj)
 
 ## Project scope
 
