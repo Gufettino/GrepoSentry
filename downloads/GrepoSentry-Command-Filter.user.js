@@ -1,22 +1,22 @@
 // ==UserScript==
 // @name         GrepoSentry - Command Filter
-// @namespace    https://grepolis.latavernadeglisbronzi.net/
-// @version      1.0.14
+// @namespace    https://github.com/Gufettino/GrepoSentry
+// @version      1.0.15
 // @description  Filtro ordini avanzato per Grepolis. Separa rivolte blu/rosse dagli attacchi in modalità rivolta, corregge supporti outgoing e pulisce i tag nel dropdown.
 // @author       Gufettino (SilthersGaming.net)
 // @match        http://*.grepolis.com/game/*
 // @match        https://*.grepolis.com/game/*
 // @exclude      view-source://*
-// @updateURL    https://grepolis.latavernadeglisbronzi.net/downloads/GrepoSentry-Command-Filter.meta.js
-// @downloadURL  https://grepolis.latavernadeglisbronzi.net/downloads/GrepoSentry-Command-Filter.user.js
-// @homepageURL  https://grepolis.latavernadeglisbronzi.net/
-// @supportURL   https://grepolis.latavernadeglisbronzi.net/
-// @icon         https://grepolis.latavernadeglisbronzi.net/logo.png
-// @icon64       https://grepolis.latavernadeglisbronzi.net/logo.png
+// @updateURL    https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/downloads/GrepoSentry-Command-Filter.meta.js
+// @downloadURL  https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/downloads/GrepoSentry%20-%20Command%20Filter.user.js
+// @homepageURL  https://discord.gg/4TA7F8SYJj
+// @supportURL   https://discord.gg/4TA7F8SYJj
+// @icon         https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/assets/logo.png
+// @icon64       https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/assets/logo.png
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
 // @grant        GM_info
-// @connect      grepolis.latavernadeglisbronzi.net
+// @connect      raw.githubusercontent.com
 // @run-at       document-idle
 // @copyright    2026+, grepolis.latavernadeglisbronzi.net | latavernadeglisbronzi.net | silthersgaming.net
 // ==/UserScript==
