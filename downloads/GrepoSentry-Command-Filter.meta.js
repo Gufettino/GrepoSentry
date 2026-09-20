@@ -14,7 +14,7 @@
 // @run-at       document-idle
 // @homepageURL  https://github.com/Gufettino/GrepoSentry/
 // @supportURL   https://discord.gg/4TA7F8SYJj
-// @downloadURL  https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/downloads/GrepoSentry%20-%20Command%20Filter.user.js
+// @downloadURL  https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/downloads/GrepoSentry-Command-Filter.user.js
 // @updateURL    https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/downloads/GrepoSentry-Command-Filter.meta.js
 // @icon         https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/assets/logo.png
 // @icon64       https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/assets/logo.png
