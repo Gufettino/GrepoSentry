@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GrepoSentry - Command Filter
 // @namespace    https://grepolis.latavernadeglisbronzi.net/
-// @version      1.0.14
+// @version      1.0.15
 // @description  Advanced command filter for Grepolis - Created by Gufettino | SilthersGaming.net
 // @author       Gufettino (SilthersGaming.net)
 // @match        http://*.grepolis.com/game/*
@@ -12,10 +12,10 @@
 // @grant        GM_info
 // @connect      grepolis.latavernadeglisbronzi.net
 // @run-at       document-idle
-// @homepageURL  https://grepolis.latavernadeglisbronzi.net/script.php
-// @supportURL   https://grepolis.latavernadeglisbronzi.net/script.php
-// @downloadURL  https://grepolis.latavernadeglisbronzi.net/downloads/GrepoSentry-Command-Filter.user.js
-// @updateURL    https://grepolis.latavernadeglisbronzi.net/downloads/GrepoSentry-Command-Filter.meta.js
+// @homepageURL  https://github.com/Gufettino/GrepoSentry/
+// @supportURL   https://discord.gg/4TA7F8SYJj
+// @downloadURL  https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/downloads/GrepoSentry%20-%20Command%20Filter.user.js
+// @updateURL    https://raw.githubusercontent.com/Gufettino/GrepoSentry/main/downloads/GrepoSentry-Command-Filter.meta.js
 // @icon         https://grepolis.latavernadeglisbronzi.net/logo.png
 // @icon64       https://grepolis.latavernadeglisbronzi.net/logo.png
 // ==/UserScript==
